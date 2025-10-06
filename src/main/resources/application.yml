@@ -9,9 +9,9 @@ server:
     context-path: /restaurant-finder
 logging:
   level:
-    de:
-      whiteo:
-        mylfa: ${APP_LOG_LEVEL}
+    com:
+      amazingapps:
+        restaurant-finder: ${APP_LOG_LEVEL}
 jwt:
   expiration:
     time: ${TOKEN_EXPIRATION_TIME}
