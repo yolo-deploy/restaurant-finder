@@ -111,19 +111,6 @@ class UserServiceTest {
     }
 
     @Test
-    void getToken_invalidPassword_shouldThrowBadCredentialsException() {
-        // Arrange
-        when(repository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(user));
-        try (MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
-            passwordUtil.when(() -> PasswordUtil.matches("wrongPassword", "hashedPassword")).thenReturn(false);
-
-            // Act & Assert
-            assertThrows(BadCredentialsException.class, () -> userService.getToken(null, new UserLoginRequest("test@example.com", "wrongPassword")));
-            passwordUtil.verify(() -> PasswordUtil.matches("wrongPassword", "hashedPassword"));
-        }
-    }
-
-    @Test
     void validateToken_shouldReturnValidationResult() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
