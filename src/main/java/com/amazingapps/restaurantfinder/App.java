@@ -10,6 +10,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
+
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         SpringApplication.run(App.class, args);
     }
