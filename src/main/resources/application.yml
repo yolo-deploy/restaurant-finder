@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: restaurant-finder
+  main:
+    banner-mode: off
+server:
+  port: 8080
+  servlet:
+    context-path: /restaurant-finder
+logging:
+  level:
+    com:
+      amazingapps:
+        restaurant-finder: ${APP_LOG_LEVEL}
+jwt:
+  expiration:
+    time: ${TOKEN_EXPIRATION_TIME}
+  secret:
+    key: ${TOKEN_SECRET_KEY}
+app:
+  version: "@project.version@"
