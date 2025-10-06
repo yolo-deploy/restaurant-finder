@@ -5,11 +5,11 @@ spring:
     banner-mode: off
   data:
     mongodb:
-      username: ${MONGO_USER}
-      password: ${MONGO_PASSWORD}
-      host: ${MONGO_HOST}
-      port: ${MONGO_PORT}
-      database: ${MONGO_DATABASE}
+      username: test
+      password: test
+      host: localhost
+      port: 27017
+      database: testdb
 server:
   port: 8080
   servlet:
@@ -21,8 +21,9 @@ logging:
         restaurant-finder: INFO
 jwt:
   expiration:
-    time: ${TOKEN_EXPIRATION_TIME}
+    time: 3600
   secret:
-    key: ${TOKEN_SECRET_KEY}
+    key: testsecret
 app:
-  version: "@project.version@"
+  version: "0.1"
+
