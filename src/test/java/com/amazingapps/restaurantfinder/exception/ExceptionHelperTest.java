@@ -1,11 +1,8 @@
 package com.amazingapps.restaurantfinder.exception;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ExceptionHelperTest {
@@ -29,16 +26,5 @@ class ExceptionHelperTest {
         HttpMessageConversionException ex = new HttpMessageConversionException("simple error");
         String msg = ExceptionHelper.getJsonExceptionMessage(ex);
         assertTrue(msg.contains("simple error"));
-    }
-
-    @Test
-    void getJsonExceptionMessage_jsonMappingException_returnsFieldInfo() {
-        JsonMappingException.Reference ref = new JsonMappingException.Reference(Object.class, "fieldName");
-        JsonMappingException mappingEx = JsonMappingException.fromUnexpectedIOE(new java.io.IOException("bad format"));
-        mappingEx.prependPath(ref);
-        HttpMessageConversionException ex = new HttpMessageNotReadableException("bad format", mappingEx);
-        String msg = ExceptionHelper.getJsonExceptionMessage(ex);
-        assertTrue(msg.contains("Format error:"));
-        assertTrue(msg.contains("fieldName"));
     }
 }

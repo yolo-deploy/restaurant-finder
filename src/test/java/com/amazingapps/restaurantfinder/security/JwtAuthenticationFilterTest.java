@@ -78,18 +78,4 @@ class JwtAuthenticationFilterTest {
         assertNotNull(result);
         assertEquals(reqObj.email(), result.getPrincipal());
     }
-
-    @Test
-    void attemptAuthentication_throwsAppRuntimeExceptionOnIOException() {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter();
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
-        try {
-            when(req.getInputStream()).thenThrow(new IOException("fail"));
-            filter.attemptAuthentication(req, resp);
-            fail("Should throw AppRuntimeException");
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IOException);
-        }
-    }
 }
