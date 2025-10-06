@@ -138,8 +138,7 @@ public class RestExceptionHandler {
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
         String errors = fieldErrors.stream()
-                .map(
-                        error -> error.getField() + ": " + error.getDefaultMessage()).findFirst().orElse("ops!");
+                .map(error -> error.getField() + ": " + error.getDefaultMessage()).findFirst().orElse("ops!");
         return buildResponse(BAD_REQUEST, ErrorType.BAD_REQUEST, errors, ex);
     }
 }

@@ -1,5 +1,6 @@
 package com.amazingapps.restaurantfinder.security;
 
+import com.amazingapps.restaurantfinder.dto.user.UserLoginRequest;
 import com.amazingapps.restaurantfinder.exception.AppRuntimeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             UserLoginRequest loginRequest = new ObjectMapper()
                     .readValue(request.getInputStream(), UserLoginRequest.class);
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    loginRequest.getEmail(), loginRequest.getPassword());
+                    loginRequest.email(), loginRequest.password());
             return getAuthenticationManager().authenticate(authToken);
         } catch (IOException e) {
             throw new AppRuntimeException(e);
