@@ -36,7 +36,7 @@ class JwtAuthenticationFilterTest {
         public boolean isFinished() {
             try {
                 return delegate.available() == 0;
-            } catch (IOException e) {
+            } catch (IOException _) {
                 return true;
             }
         }
