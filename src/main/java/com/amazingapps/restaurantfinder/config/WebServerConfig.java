@@ -1,6 +1,5 @@
 package com.amazingapps.restaurantfinder.config;
 
-
 import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
