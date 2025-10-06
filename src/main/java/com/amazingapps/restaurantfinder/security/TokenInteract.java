@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Service for working with JWT tokens: generation, validation, and extracting user info.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -35,11 +38,21 @@ public class TokenInteract {
     @Value("${jwt.expiration.time}")
     private long expirationTime;
 
+    /**
+     * Extracts the username from the JWT token.
+     * @param token JWT token string
+     * @return username string
+     */
     public String getUser(String token) {
         JwtParser jwtParser = getJwtParser();
         return jwtParser.parseSignedClaims(token).getPayload().getSubject();
     }
 
+    /**
+     * Validates the JWT token.
+     * @param token JWT token string
+     * @return true if valid, false otherwise
+     */
     public boolean validateToken(String token) {
         String result;
         try {
