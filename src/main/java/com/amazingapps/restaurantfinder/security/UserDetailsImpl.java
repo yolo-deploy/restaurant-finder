@@ -12,7 +12,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private String id;
     private String name;
-    private char[] password;
+    private String passwordHash;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -21,7 +21,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return String.valueOf(password);
+        return passwordHash;
     }
 
     @Override
