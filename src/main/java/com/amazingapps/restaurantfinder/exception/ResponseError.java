@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Model for error response returned by REST API.
+ * Contains timestamp, status, message, and error code.
+ */
 @Data
 @Builder
 @NoArgsConstructor

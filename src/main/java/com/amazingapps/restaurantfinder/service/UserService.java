@@ -18,6 +18,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class for user-related operations such as authentication, token management, and user lookup.
+ * Implements Spring Security's UserDetailsService for authentication integration.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -26,6 +30,12 @@ public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final UserMapper mapper;
 
+    /**
+     * Authenticates a user by ID or email and returns a login response with JWT token.
+     * @param id user ID (nullable)
+     * @param request user login request
+     * @return login response containing JWT token and user info
+     */
     public UserLoginResponse getToken(String id, UserLoginRequest request) {
         User user = null == id ? findByEmail(request.email()) : repository.getOrThrow(id);
 
@@ -36,11 +46,22 @@ public class UserService implements UserDetailsService {
         return mapper.toLoginResponse(response, tokenInteract.generateToken(loadUserByUsername(user.getEmail())));
     }
 
+    /**
+     * Validates the JWT token from the HTTP request.
+     * @param request HTTP servlet request
+     * @return true if token is valid, false otherwise
+     */
     public Boolean validateToken(HttpServletRequest request) {
         String token = tokenInteract.getToken(request);
         return tokenInteract.validateToken(token);
     }
 
+    /**
+     * Loads user details by username (email) for authentication.
+     * @param name user's email address
+     * @return UserDetails implementation
+     * @throws UsernameNotFoundException if user is not found
+     */
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = repository.findByEmailIgnoreCase(name)
@@ -52,6 +73,11 @@ public class UserService implements UserDetailsService {
                 .passwordHash(user.getPasswordHash()).build();
     }
 
+    /**
+     * Finds a user by email or throws BadCredentialsException if not found.
+     * @param email user's email address
+     * @return User entity
+     */
     public User findByEmail(String email) {
         return repository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new BadCredentialsException(
@@ -59,12 +85,23 @@ public class UserService implements UserDetailsService {
                 ));
     }
 
+    /**
+     * Verifies the raw password against the stored password hash.
+     * Throws BadCredentialsException if the password is invalid.
+     * @param rawPassword plain text password
+     * @param passwordHash hashed password
+     */
     private void verifyPassword(String rawPassword, String passwordHash) {
         if (!PasswordUtil.matches(rawPassword, passwordHash)) {
             throw new BadCredentialsException("Invalid password");
         }
     }
 
+    /**
+     * Checks if the email is unique in the database.
+     * Throws ExecutionConflictException if a user with the email already exists.
+     * @param email user's email address
+     */
     private void checkUniqueEmail(String email) {
         repository.findByEmailIgnoreCase(email)
                 .ifPresent(u -> {

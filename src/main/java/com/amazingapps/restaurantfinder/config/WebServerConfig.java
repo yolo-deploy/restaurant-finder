@@ -6,9 +6,17 @@ import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFa
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for customizing Undertow web server.
+ * Sets up WebSocket buffer pool for servlet context.
+ */
 @Configuration
 public class WebServerConfig implements WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
 
+    /**
+     * Customizes the UndertowServletWebServerFactory to support WebSocket deployment.
+     * @param factory UndertowServletWebServerFactory instance
+     */
     @Override
     public void customize(UndertowServletWebServerFactory factory) {
         factory.addDeploymentInfoCustomizers(deploymentInfo -> {

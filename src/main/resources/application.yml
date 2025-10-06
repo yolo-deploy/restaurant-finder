@@ -18,7 +18,7 @@ logging:
   level:
     com:
       amazingapps:
-        restaurant-finder: INFO
+        restaurant-finder: ${APP_LOG_LEVEL}
 jwt:
   expiration:
     time: ${TOKEN_EXPIRATION_TIME}

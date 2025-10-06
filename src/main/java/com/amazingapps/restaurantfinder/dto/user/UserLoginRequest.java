@@ -4,6 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * DTO for user login request.
+ * Contains email and password fields with validation constraints.
+ */
 public record UserLoginRequest(
         @Email(message = "Invalid email format")
         @NotBlank(message = "Email cannot be blank")

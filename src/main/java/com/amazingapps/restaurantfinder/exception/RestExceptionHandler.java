@@ -32,11 +32,23 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+/**
+ * Global exception handler for REST API.
+ * Handles various exceptions and returns standardized error responses.
+ */
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class RestExceptionHandler {
 
+    /**
+     * Builds a standardized error response for REST API.
+     * @param status HTTP status
+     * @param code error type
+     * @param msg error message
+     * @param ex exception
+     * @return ResponseEntity with ResponseError
+     */
     public static ResponseEntity<ResponseError> buildResponse(HttpStatus status, ErrorType code, String msg,
                                                               Throwable ex) {
         if (NOT_FOUND.equals(status) || CONFLICT.equals(status)) {
@@ -53,6 +65,9 @@ public class RestExceptionHandler {
                         .build());
     }
 
+    /**
+     * Handles all uncaught exceptions and returns an undefined error response.
+     */
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ResponseEntity<ResponseError> handleUndefinedException(Throwable ex) {
@@ -60,30 +75,45 @@ public class RestExceptionHandler {
         return buildResponse(INTERNAL_SERVER_ERROR, ErrorType.UNDEFINED_ERROR, message, ex);
     }
 
+    /**
+     * Handles HttpClientErrorException (authorization errors).
+     */
     @ResponseStatus(UNAUTHORIZED)
     @ExceptionHandler(HttpClientErrorException.class)
     protected ResponseEntity<ResponseError> handleHttpClientErrorException(HttpClientErrorException ex) {
         return buildResponse(UNAUTHORIZED, ErrorType.AUTHORIZATION_ERROR, ex.getMessage(), ex);
     }
 
+    /**
+     * Handles BadCredentialsException (authorization errors).
+     */
     @ResponseStatus(UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)
     protected ResponseEntity<ResponseError> handleBadCredentialsException(BadCredentialsException ex) {
         return buildResponse(UNAUTHORIZED, ErrorType.AUTHORIZATION_ERROR, ex.getMessage(), ex);
     }
 
+    /**
+     * Handles ExecutionConflictException (conflict errors).
+     */
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(ExecutionConflictException.class)
     protected ResponseEntity<ResponseError> handleExecutionConflictException(ExecutionConflictException ex) {
         return buildResponse(CONFLICT, ErrorType.CONFLICT, ex.getMessage(), ex);
     }
 
+    /**
+     * Handles NotFoundObjectException (not found errors).
+     */
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(NotFoundObjectException.class)
     protected ResponseEntity<ResponseError> handleNotFoundObjectException(NotFoundObjectException ex) {
         return buildResponse(NOT_FOUND, ErrorType.NOT_FOUND, ex.getMessage(), ex);
     }
 
+    /**
+     * Handles MethodArgumentTypeMismatchException (bad request errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ResponseError> handleMethodArgumentTypeMismatchException(
@@ -91,12 +121,18 @@ public class RestExceptionHandler {
         return buildResponse(BAD_REQUEST, ErrorType.BAD_REQUEST, ex.getMessage(), ex);
     }
 
+    /**
+     * Handles HttpMessageNotReadableException (bad request errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ResponseError> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return buildResponse(BAD_REQUEST, ErrorType.BAD_REQUEST, ex.getMessage(), ex);
     }
 
+    /**
+     * Handles HttpMessageConversionException (message conversion errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<ResponseError> handleMessageConversionException(HttpMessageConversionException ex) {
@@ -104,6 +140,9 @@ public class RestExceptionHandler {
                 getJsonExceptionMessage(ex), ex);
     }
 
+    /**
+     * Handles ServletRequestBindingException (missing parameter errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(ServletRequestBindingException.class)
     public ResponseEntity<ResponseError> handleServletRequestBinding(ServletRequestBindingException ex) {
@@ -111,6 +150,9 @@ public class RestExceptionHandler {
                 getRootCauseMessage(ex), ex);
     }
 
+    /**
+     * Handles ConstraintViolationException (missing parameter errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ResponseError> handleConstraintViolation(ConstraintViolationException ex) {
@@ -118,6 +160,9 @@ public class RestExceptionHandler {
                 getRootCauseMessage(ex), ex);
     }
 
+    /**
+     * Handles TypeMismatchException (type mismatch errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ResponseError> handleTypeMismatch(TypeMismatchException ex) {
@@ -126,11 +171,18 @@ public class RestExceptionHandler {
         return buildResponse(BAD_REQUEST, ErrorType.REQUEST_TYPE_MISMATCH, message, ex);
     }
 
+    /**
+     * Handles UnsupportedOperationException (unsupported operation errors).
+     */
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(UnsupportedOperationException.class)
     public ResponseEntity<ResponseError> handleUnsupportedOperation(UnsupportedOperationException ex) {
         return buildResponse(BAD_REQUEST, ErrorType.UNSUPPORTED_OPERATION, getRootCauseMessage(ex), ex);
     }
+
+    /**
+     * Handles MethodArgumentNotValidException (validation errors).
+     */
     @ResponseBody
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
