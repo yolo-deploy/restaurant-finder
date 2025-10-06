@@ -1,6 +1,6 @@
 package com.amazingapps.restaurantfinder.controller;
 
-import com.amazingapps.restaurantfinder.model.Restaurant;
+import com.amazingapps.restaurantfinder.domain.Restaurant;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class RestaurantFinderController {
     public ResponseEntity<Restaurant> getRestaurantById(@PathVariable String id) {
         //Optional<Restaurant> restaurant = restaurantService.getRestaurantById(id);
         //return restaurant.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-        Restaurant restaurant = new Restaurant("1", "Test", "Test", "22333", "test@email.com");
+        Restaurant restaurant = new Restaurant();
         return new ResponseEntity<>(restaurant,  HttpStatus.OK);
     }
 
@@ -40,7 +40,7 @@ public class RestaurantFinderController {
                                                        @RequestBody Restaurant restaurantDetails) {
         try {
             //Restaurant updatedRestaurant = restaurantService.updateRestaurant(id, restaurantDetails);
-            Restaurant updatedRestaurant = new Restaurant("1", "Test", "Test", "22333", "test@email.com");
+            Restaurant updatedRestaurant = new Restaurant();
             return ResponseEntity.ok(updatedRestaurant);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
