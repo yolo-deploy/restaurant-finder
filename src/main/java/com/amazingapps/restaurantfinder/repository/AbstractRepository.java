@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
-public interface AbstractRepository<T, ID> extends MongoRepository<T, ID> {
+public interface AbstractRepository<T, I> extends MongoRepository<T, I> {
 
-    default T getOrThrow(ID id) {
+    default T getOrThrow(I id) {
         return findById(id)
                 .orElseThrow(() ->
                         new NotFoundObjectException(getEntityName() + " not found with id: " + id));

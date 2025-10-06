@@ -46,13 +46,13 @@ public class TokenInteract {
             JwtParser jwtParser = getJwtParser();
             jwtParser.parseSignedClaims(token);
             return true;
-        } catch (MalformedJwtException e) {
+        } catch (MalformedJwtException _) {
             result = "Invalid JWT token";
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException _) {
             result = "Expired JWT token";
-        } catch (UnsupportedJwtException e) {
+        } catch (UnsupportedJwtException _) {
             result = "Unsupported JWT token";
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             result = "JWT claims string is empty";
         }
         throw new ExecutionConflictException(result);
