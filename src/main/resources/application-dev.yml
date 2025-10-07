@@ -5,7 +5,7 @@ spring:
     banner-mode: off
   data:
     mongodb:
-      uri: mongodb+srv://mongo_db_user_123:sR6PDd6As014C5xv@cluster0.2blb24a.mongodb.net/restaurant_finder?retryWrites=true&w=majority
+      uri: localhost:27017/restaurant_finder
 server:
   port: 8080
   servlet:
