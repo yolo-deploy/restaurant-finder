@@ -19,15 +19,9 @@ import java.time.LocalDateTime;
 @Document(collection = "messages")
 public class Message {
 
-    /**
-     * Unique identifier for the message (MongoDB ObjectId).
-     */
-    @Id
-    private String id;
 
-    /**
-     * The ID of the user who sent the message.
-     */
+
+
     private String userId;
 
     /**
