@@ -11,11 +11,17 @@ class RestaurantTest {
 
     @Test
     void openingHours_and_review_gettersSetters_work() {
-        Restaurant.OpeningHours oh = new Restaurant.OpeningHours(true, List.of("Mon: 9-17"));
+        Restaurant.OpeningHours oh = new Restaurant.OpeningHours();
+        oh.setOpenNow(true);
+        oh.setWeekdayText(List.of("Mon: 9-17"));
         assertTrue(oh.getOpenNow());
         assertEquals(1, oh.getWeekdayText().size());
 
-        Restaurant.Review r = new Restaurant.Review("Author", 4.5, "Nice", LocalDateTime.now(), LocalDateTime.now());
+        Restaurant.Review r = new Restaurant.Review();
+        r.setAuthorName("Author");
+        r.setRating(4.5);
+        r.setCreatedAt(LocalDateTime.now());
+        r.setRelativeTimeDescription(LocalDateTime.now());
         assertEquals("Author", r.getAuthorName());
         assertEquals(4.5, r.getRating());
     }
