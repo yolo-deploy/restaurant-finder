@@ -7,18 +7,18 @@ import org.springframework.data.repository.NoRepositoryBean;
 /**
  * Base interface for all MongoDB repositories in the application.
  * Provides common methods for entity retrieval and naming.
- * @param <T> entity type
+ * @param <E> entity type
  * @param <I> entity ID type
  */
 @NoRepositoryBean
-public interface AbstractRepository<T, I> extends MongoRepository<T, I> {
+public interface AbstractRepository<E, I> extends MongoRepository<E, I> {
 
     /**
      * Finds an entity by its ID or throws NotFoundObjectException if not found.
      * @param id entity ID
      * @return entity instance
      */
-    default T getOrThrow(I id) {
+    default E getOrThrow(I id) {
         return findById(id)
                 .orElseThrow(() ->
                         new NotFoundObjectException(getEntityName() + " not found with id: " + id));

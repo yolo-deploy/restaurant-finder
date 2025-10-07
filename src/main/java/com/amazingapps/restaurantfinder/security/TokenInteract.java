@@ -39,11 +39,11 @@ public class TokenInteract {
     private long expirationTime;
 
     /**
-     * Extracts the username from the JWT token.
+     * Extracts the user id from the JWT token.
      * @param token JWT token string
-     * @return username string
+     * @return user id string
      */
-    public String getUser(String token) {
+    public String getUserId(String token) {
         JwtParser jwtParser = getJwtParser();
         return jwtParser.parseSignedClaims(token).getPayload().getSubject();
     }

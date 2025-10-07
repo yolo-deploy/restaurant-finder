@@ -18,7 +18,7 @@ public class PasswordUtil {
      * @param rawPassword plain text password
      * @return hashed password string
      */
-    public static String hashPassword(String rawPassword) {
+    public static String hash(String rawPassword) {
         return encoder.encode(rawPassword);
     }
 
