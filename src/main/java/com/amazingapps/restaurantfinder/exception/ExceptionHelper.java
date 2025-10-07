@@ -6,6 +6,9 @@ import org.springframework.http.converter.HttpMessageConversionException;
 
 import java.util.stream.Collectors;
 
+/**
+ * Utility class for extracting and formatting exception messages.
+ */
 public class ExceptionHelper {
 
     public static final String UNDEFINED_FORMAT_ERROR = "Undefined format error";
@@ -13,11 +16,21 @@ public class ExceptionHelper {
     private ExceptionHelper() {
     }
 
+    /**
+     * Returns the root cause message of the given exception.
+     * @param ex the exception
+     * @return root cause message string
+     */
     public static String getRootCauseMessage(Throwable ex) {
         Throwable rootCause = ClassUtil.getRootCause(ex);
         return ClassUtil.exceptionMessage(rootCause);
     }
 
+    /**
+     * Returns a formatted message for JSON conversion exceptions.
+     * @param ex the HttpMessageConversionException
+     * @return formatted error message string
+     */
     public static String getJsonExceptionMessage(HttpMessageConversionException ex) {
         if (ex == null) {
             return UNDEFINED_FORMAT_ERROR;

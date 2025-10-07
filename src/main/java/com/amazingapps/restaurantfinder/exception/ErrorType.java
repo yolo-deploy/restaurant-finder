@@ -1,5 +1,8 @@
 package com.amazingapps.restaurantfinder.exception;
 
+/**
+ * Enumeration of error types used for error handling and response codes.
+ */
 public enum ErrorType {
     UNDEFINED_ERROR,
     BAD_REQUEST,

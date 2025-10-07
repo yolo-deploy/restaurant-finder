@@ -4,6 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * DTO for creating a new user.
+ * Contains email and password fields with validation constraints.
+ */
 public record UserCreateRequest(
         @Email(message = "Invalid email format")
         @NotBlank(message = "Email cannot be blank")
