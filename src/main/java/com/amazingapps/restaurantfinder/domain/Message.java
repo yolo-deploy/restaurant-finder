@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "messages")
-public class Message {
+public class Message extends AbstractDocument{
 
 
 
