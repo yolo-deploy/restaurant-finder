@@ -31,11 +31,6 @@ public class Message {
     private String userId;
 
     /**
-     * The ID of the restaurant that receives the message.
-     */
-    private String restaurantId;
-
-    /**
      * The message content text.
      */
     private String content;
