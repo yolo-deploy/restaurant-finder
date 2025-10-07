@@ -1,19 +1,52 @@
 package com.amazingapps.restaurantfinder.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 /**
- * Repräsentiert eine Nachricht, die ein User an ein Restaurant schickt.
- * Wird als eigenständige Collection in MongoDB gespeichert.
+ * Represents a user message sent to a restaurant.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "messages")
-public record Message(
-        @Id String id,            // MongoDB ID der Nachricht
-        String userId,            // Wer hat die Nachricht geschrieben
-        String restaurantId,      // An welches Restaurant geht die Nachricht
-        String content,           // Text der Nachricht
-        LocalDateTime sentAt      // Zeitpunkt des Versendens
-) {}
+public class Message {
+
+    /**
+     * Unique identifier for the message (MongoDB ObjectId).
+     */
+    @Id
+    private String id;
+
+    /**
+     * The ID of the user who sent the message.
+     */
+    private String userId;
+
+    /**
+     * The ID of the restaurant that receives the message.
+     */
+    private String restaurantId;
+
+    /**
+     * The message content text.
+     */
+    private String content;
+
+    /**
+     * The date and time when the message was sent.
+     */
+    private LocalDateTime sentAt = LocalDateTime.now();
+
+    /**
+     * Optional: whether the message has been read by the restaurant admin.
+     */
+    private boolean read = false;
+}
