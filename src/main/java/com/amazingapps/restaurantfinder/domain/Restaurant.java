@@ -18,6 +18,8 @@ import java.util.List;
  * Contains information about the restaurant such as name, rating, location, types, reviews, and opening hours.
  */
 @Document(collection = "restaurants")
+@Getter
+@Setter
 public class Restaurant extends AbstractDocument {
 
     /**
