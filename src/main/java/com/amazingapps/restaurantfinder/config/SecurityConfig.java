@@ -63,6 +63,6 @@ public class SecurityConfig {
      */
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
-        return (request, response, authentication) -> response.setStatus(HttpStatus.OK.value());
+        return (_, response, _) -> response.setStatus(HttpStatus.OK.value());
     }
 }

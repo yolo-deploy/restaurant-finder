@@ -28,4 +28,14 @@ public interface UserMapper extends AbstractMapper<User, UserResponse> {
     @Mapping(target = "token", source = "token")
     @Mapping(target = "user", source = "user")
     UserLoginResponse toLoginResponse(UserResponse user, String token);
+
+    /**
+     * Converts email and password hash to a User entity.
+     * @param email user's email
+     * @param passwordHash hashed password
+     * @return User entity
+     */
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "passwordHash", source = "passwordHash")
+    User toEntity(String email, String passwordHash);
 }

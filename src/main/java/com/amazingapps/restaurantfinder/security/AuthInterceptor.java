@@ -1,10 +1,10 @@
 package com.amazingapps.restaurantfinder.security;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -20,20 +20,26 @@ import org.springframework.web.servlet.ModelAndView;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private final ThreadLocal<String> users = new ThreadLocal<>();
-
     private final TokenInteract tokenInteract;
+    private final ThreadLocal<String> users = new ThreadLocal<>();
 
     /**
      * Checks JWT token validity and sets user in ThreadLocal before handling request.
      */
     @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response,
                              @NonNull Object handler) throws Exception {
+        if (request.getServletPath().equals("/version")
+                || request.getServletPath().equals("/api/v1/authenticate")
+                || request.getServletPath().equals("/api/v1/user/create")
+                || request.getRequestURI().equals("/api/v1/authenticate")
+                || request.getRequestURI().equals("/api/v1/user/create")) {
+            return true;
+        }
 
         String token = tokenInteract.getToken(request);
         if (tokenInteract.validateToken(token)) {
-            String user = tokenInteract.getUser(token);
+            String user = tokenInteract.getUserId(token);
             if (StringUtils.isNotBlank(user)) {
                 users.set(user);
                 return true;
@@ -44,10 +50,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * Returns the username extracted from the JWT token.
-     * @return username string
+     * Returns the userId extracted from the JWT token for the current request thread.
      */
-    public String getUserName() {
+    public String getUserId() {
         return users.get();
     }
 
