@@ -34,8 +34,6 @@ public class Message {
      */
     private LocalDateTime sentAt = LocalDateTime.now();
 
-    /**
-     * Optional: whether the message has been read by the restaurant admin.
-     */
+
     private boolean read = false;
 }
