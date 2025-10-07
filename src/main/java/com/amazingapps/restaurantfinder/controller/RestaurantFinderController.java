@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/restaurants")
+@RequestMapping("/api/v1/restaurants")
 @AllArgsConstructor
 public class RestaurantFinderController {
     //private RestaurantService restaurantService;
@@ -29,22 +29,18 @@ public class RestaurantFinderController {
         return new ResponseEntity<>(restaurant,  HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Restaurant> createRestaurant(@RequestBody Restaurant restaurant) {
         //return restaurantService.createRestaurant(restaurant);
         return new ResponseEntity<>(restaurant,  HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<Restaurant> updateRestaurant(@PathVariable String id,
                                                        @RequestBody Restaurant restaurantDetails) {
-        try {
             //Restaurant updatedRestaurant = restaurantService.updateRestaurant(id, restaurantDetails);
             Restaurant updatedRestaurant = new Restaurant();
             return ResponseEntity.ok(updatedRestaurant);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @DeleteMapping("/{id}")
@@ -65,7 +61,7 @@ public class RestaurantFinderController {
         return ResponseEntity.ok(List.of());
     }
 
-    @GetMapping("/cuisine/{cuisine}")
+    @GetMapping("/type/{type}")
     public ResponseEntity<List<Restaurant>> getRestaurantsByCuisine(@PathVariable String cuisine) {
         //return restaurantService.getRestaurantsByCuisine(cuisine);
         return ResponseEntity.ok(List.of());
