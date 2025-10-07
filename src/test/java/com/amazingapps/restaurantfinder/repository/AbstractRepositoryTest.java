@@ -62,7 +62,6 @@ class AbstractRepositoryTest {
             @NonNull org.springframework.data.domain.Example<S> example,
             @NonNull java.util.function.Function<org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery<S>, R> queryFunction
         ) {
-            // Для теста возвращаем пустой объект, чтобы не нарушать контракт @NonNull
             return java.util.Objects.requireNonNull(queryFunction.apply(null));
         }
     }
