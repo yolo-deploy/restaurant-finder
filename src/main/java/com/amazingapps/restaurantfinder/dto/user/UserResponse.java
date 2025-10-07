@@ -1,3 +1,7 @@
 package com.amazingapps.restaurantfinder.dto.user;
 
-public record UserResponse(String id, String email) {}
+/**
+ * DTO for user response.
+ * Contains user's email information.
+ */
+public record UserResponse(String email) {}

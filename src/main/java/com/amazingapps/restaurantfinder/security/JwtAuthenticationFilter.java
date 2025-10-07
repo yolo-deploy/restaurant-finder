@@ -13,9 +13,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
+/**
+ * Authentication filter for processing JWT login requests.
+ * Reads credentials from request and authenticates using AuthenticationManager.
+ */
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    /**
+     * Attempts authentication by reading UserLoginRequest from the request.
+     * @param request HTTP servlet request
+     * @param response HTTP servlet response
+     * @return Authentication object
+     * @throws AuthenticationException if authentication fails
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
