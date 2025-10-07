@@ -83,3 +83,8 @@ $RECYCLE.BIN/
 
 # KDE directory preferences
 .directory
+#Frontend
+/frontend/node_modules
+/frontend/dist
+/frontend/dist-ssr
+/frontend/*.local
