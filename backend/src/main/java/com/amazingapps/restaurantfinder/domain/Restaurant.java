@@ -17,7 +17,6 @@ import java.util.List;
  * Represents a restaurant entity stored in MongoDB.
  * Contains information about the restaurant such as name, rating, location, types, reviews, and opening hours.
  */
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -45,13 +44,12 @@ public class Restaurant extends AbstractDocument {
      */
     @Field("phone_number")
     private String phoneNumber;
-
     /**
-     * The types/categories of the restaurant (e.g., Italian, Sushi).
+     * The list of types/cuisines associated with the restaurant.
      */
     @Indexed
     @Field("types")
-    private List<String> types;
+    private List<RestaurantType> types;
     /**
      * The number of ratings received by the restaurant.
      */
@@ -68,10 +66,10 @@ public class Restaurant extends AbstractDocument {
     @Field("formatted_address")
     private String formattedAddress;
     /**
-     * The opening hours information for the restaurant.
+     * The opening days information for the restaurant.
      */
     @Field("opening_hours")
-    private OpeningHours openingHours;
+    private OpeningDays openingDays;
 
     /**
      * The geographic location of the restaurant (longitude, latitude).
@@ -81,12 +79,12 @@ public class Restaurant extends AbstractDocument {
     private Point location;
 
     /**
-     * Represents the opening hours of a restaurant.
+     * Represents the opening days of a restaurant.
      */
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class OpeningHours {
+    public static class OpeningDays {
         /**
          * Indicates if the restaurant is currently open.
          */
@@ -94,7 +92,7 @@ public class Restaurant extends AbstractDocument {
         /**
          * List of opening hours for each weekday.
          */
-        private List<String> weekdayText;
+        private List<WeekDay> weekdays;
     }
 
     /**

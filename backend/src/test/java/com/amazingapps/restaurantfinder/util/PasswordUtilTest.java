@@ -7,20 +7,73 @@ import static org.junit.jupiter.api.Assertions.*;
 class PasswordUtilTest {
 
     @Test
-    void hashAndMatch_shouldWork() {
-        String raw = "mySecretPassword";
-        String hashed = PasswordUtil.hash(raw);
+    void hash_ShouldReturnHashedPassword() {
+        String rawPassword = "testPassword123";
+        String hashedPassword = PasswordUtil.hash(rawPassword);
 
-        assertNotNull(hashed);
-        assertNotEquals(raw, hashed);
-        assertTrue(PasswordUtil.matches(raw, hashed));
+        assertNotNull(hashedPassword);
+        assertNotEquals(rawPassword, hashedPassword);
+        assertTrue(hashedPassword.startsWith("$2a$"));
+        assertTrue(hashedPassword.length() > 50);
     }
 
     @Test
-    void matches_wrongPassword_returnsFalse() {
-        String raw = "password1";
-        String hashed = PasswordUtil.hash("password2");
+    void hash_WithDifferentPasswords_ShouldProduceDifferentHashes() {
+        String password1 = "password1";
+        String password2 = "password2";
 
-        assertFalse(PasswordUtil.matches(raw, hashed));
+        String hash1 = PasswordUtil.hash(password1);
+        String hash2 = PasswordUtil.hash(password2);
+
+        assertNotEquals(hash1, hash2);
+    }
+
+    @Test
+    void hash_WithSamePassword_ShouldProduceDifferentHashesDueToSalt() {
+        String password = "testPassword";
+
+        String hash1 = PasswordUtil.hash(password);
+        String hash2 = PasswordUtil.hash(password);
+
+        assertNotEquals(hash1, hash2);
+    }
+
+    @Test
+    void matches_WithCorrectPassword_ShouldReturnTrue() {
+        String rawPassword = "testPassword123";
+        String hashedPassword = PasswordUtil.hash(rawPassword);
+
+        boolean matches = PasswordUtil.matches(rawPassword, hashedPassword);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    void matches_WithIncorrectPassword_ShouldReturnFalse() {
+        String rawPassword = "testPassword123";
+        String wrongPassword = "wrongPassword";
+        String hashedPassword = PasswordUtil.hash(rawPassword);
+
+        boolean matches = PasswordUtil.matches(wrongPassword, hashedPassword);
+
+        assertFalse(matches);
+    }
+
+    @Test
+    void matches_WithEmptyPassword_ShouldHandleCorrectly() {
+        String emptyPassword = "";
+        String hashedPassword = PasswordUtil.hash(emptyPassword);
+
+        boolean matches = PasswordUtil.matches(emptyPassword, hashedPassword);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    void matches_WithNullPassword_ShouldHandleCorrectly() {
+        String hashedPassword = PasswordUtil.hash("somePassword");
+
+        assertThrows(IllegalArgumentException.class, () ->
+            PasswordUtil.matches(null, hashedPassword));
     }
 }

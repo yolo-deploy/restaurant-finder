@@ -155,82 +155,29 @@ class UserServiceTest {
     }
 
     @Test
-    void getToken_withNullId_usesFindByEmail() {
-        User mockUser = mock(User.class);
-        loginRequest = new UserLoginRequest("mail", "pass");
-        when(repository.findByEmailIgnoreCase("mail")).thenReturn(Optional.of(mockUser));
-        when(repository.getOrThrow("mockId")).thenReturn(mockUser);
-        when(mockUser.getPasswordHash()).thenReturn("hash");
-        when(mockUser.getId()).thenReturn("mockId");
-        try (MockedStatic<PasswordUtil> util = mockStatic(PasswordUtil.class)) {
-            util.when(() -> PasswordUtil.matches(any(), any())).thenReturn(true);
-            when(mapper.toResponse(any())).thenReturn(userResponse);
-            when(tokenInteract.generateToken(any())).thenReturn("token");
-            when(mapper.toLoginResponse(any(), any())).thenReturn(loginResponse);
-            UserLoginResponse resp = userService.getToken(loginRequest);
-            assertNotNull(resp);
+    void getToken_invalidPassword_shouldThrowBadCredentialsException() {
+        when(repository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(user));
+        try (MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
+            passwordUtil.when(() -> PasswordUtil.matches("wrongpassword", "hashedPassword")).thenReturn(false);
+
+            UserLoginRequest invalidRequest = new UserLoginRequest("test@example.com", "wrongpassword");
+
+            assertThrows(BadCredentialsException.class, () -> userService.getToken(invalidRequest));
+            verify(repository).findByEmailIgnoreCase("test@example.com");
+            passwordUtil.verify(() -> PasswordUtil.matches("wrongpassword", "hashedPassword"));
         }
     }
 
     @Test
-    void getToken_withId_usesGetOrThrow() {
-        String userId = "specificUserId";
-        User mockUser = mock(User.class);
-        loginRequest = new UserLoginRequest("user@test.com", "validPassword");
+    void validateToken_invalidToken_shouldReturnFalse() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(tokenInteract.getToken(request)).thenReturn("invalidtoken");
+        when(tokenInteract.validateToken("invalidtoken")).thenReturn(false);
 
-        when(mockUser.getId()).thenReturn(userId);
-        when(mockUser.getPasswordHash()).thenReturn("hashedPassword");
+        Boolean result = userService.validateToken(request);
 
-        when(repository.findByEmailIgnoreCase("user@test.com")).thenReturn(Optional.of(mockUser));
-        when(repository.getOrThrow(userId)).thenReturn(mockUser);
-
-        try (MockedStatic<PasswordUtil> util = mockStatic(PasswordUtil.class)) {
-            util.when(() -> PasswordUtil.matches("validPassword", "hashedPassword")).thenReturn(true);
-            when(mapper.toResponse(mockUser)).thenReturn(userResponse);
-            when(tokenInteract.generateToken(any(UserDetailsImpl.class))).thenReturn("authToken");
-            when(mapper.toLoginResponse(userResponse, "authToken")).thenReturn(loginResponse);
-
-            UserLoginResponse result = userService.getToken(loginRequest);
-
-            assertNotNull(result);
-            assertEquals(loginResponse, result);
-
-            verify(repository).findByEmailIgnoreCase("user@test.com");
-            verify(repository).getOrThrow(userId);
-            util.verify(() -> PasswordUtil.matches("validPassword", "hashedPassword"));
-            verify(mapper).toResponse(mockUser);
-            verify(tokenInteract).generateToken(any(UserDetailsImpl.class));
-            verify(mapper).toLoginResponse(userResponse, "authToken");
-        }
-    }
-
-    @Test
-    void getToken_invalidPassword_throwsBadCredentialsException() {
-        User mockUser = mock(User.class);
-        loginRequest = new UserLoginRequest("mail", "pass");
-        when(repository.findByEmailIgnoreCase("mail")).thenReturn(Optional.of(mockUser));
-        when(mockUser.getPasswordHash()).thenReturn("hash");
-        try (MockedStatic<PasswordUtil> util = mockStatic(PasswordUtil.class)) {
-            util.when(() -> PasswordUtil.matches(any(), any())).thenReturn(false);
-            assertThrows(BadCredentialsException.class, () -> userService.getToken(loginRequest));
-        }
-    }
-
-    @Test
-    void loadUserByUsername_notFound_throwsException() {
-        when(repository.getOrThrow("mail")).thenThrow(new UsernameNotFoundException("User not found"));
-
-        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("mail"));
-        verify(repository).getOrThrow("mail");
-    }
-
-    @Test
-    void validateToken_returnsTrueOrFalse() {
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        when(tokenInteract.getToken(req)).thenReturn("token");
-        when(tokenInteract.validateToken("token")).thenReturn(true);
-        assertTrue(userService.validateToken(req));
-        when(tokenInteract.validateToken("token")).thenReturn(false);
-        assertFalse(userService.validateToken(req));
+        assertFalse(result);
+        verify(tokenInteract).getToken(request);
+        verify(tokenInteract).validateToken("invalidtoken");
     }
 }

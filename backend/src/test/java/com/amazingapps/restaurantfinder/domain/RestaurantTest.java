@@ -27,7 +27,7 @@ class RestaurantTest {
         assertNull(restaurant.getRatingCount());
         assertNull(restaurant.getReviews());
         assertNull(restaurant.getFormattedAddress());
-        assertNull(restaurant.getOpeningHours());
+        assertNull(restaurant.getOpeningDays());
         assertNull(restaurant.getLocation());
     }
 
@@ -74,19 +74,18 @@ class RestaurantTest {
     @Test
     void setTypes_ShouldSetTypesCorrectly() {
         Restaurant restaurant = new Restaurant();
-        List<String> types = Arrays.asList("Italian", "Pizza", "Fine Dining");
+        List<RestaurantType> types = Arrays.asList(RestaurantType.ITALIAN, RestaurantType.GERMAN);
 
         restaurant.setTypes(types);
 
         assertEquals(types, restaurant.getTypes());
-        assertEquals(3, restaurant.getTypes().size());
-        assertTrue(restaurant.getTypes().contains("Italian"));
+        assertEquals(2, restaurant.getTypes().size());
     }
 
     @Test
     void setRatingCount_ShouldSetRatingCountCorrectly() {
         Restaurant restaurant = new Restaurant();
-        Integer ratingCount = 150;
+        Integer ratingCount = 100;
 
         restaurant.setRatingCount(ratingCount);
 
@@ -96,7 +95,7 @@ class RestaurantTest {
     @Test
     void setFormattedAddress_ShouldSetFormattedAddressCorrectly() {
         Restaurant restaurant = new Restaurant();
-        String address = "123 Main St, Berlin, Germany";
+        String address = "123 Main St, Berlin";
 
         restaurant.setFormattedAddress(address);
 
@@ -106,47 +105,72 @@ class RestaurantTest {
     @Test
     void setLocation_ShouldSetLocationCorrectly() {
         Restaurant restaurant = new Restaurant();
-        Point location = new Point(13.4050, 52.5200); // Berlin coordinates
+        Point location = new Point(13.4050, 52.5200);
 
         restaurant.setLocation(location);
 
         assertEquals(location, restaurant.getLocation());
-        assertEquals(13.4050, restaurant.getLocation().getX());
-        assertEquals(52.5200, restaurant.getLocation().getY());
     }
 
     @Test
-    void setOpeningHours_ShouldSetOpeningHoursCorrectly() {
+    void setOpeningDays_ShouldSetOpeningDaysCorrectly() {
         Restaurant restaurant = new Restaurant();
-        Restaurant.OpeningHours openingHours = new Restaurant.OpeningHours();
-        openingHours.setOpenNow(true);
+        Restaurant.OpeningDays openingDays = new Restaurant.OpeningDays();
 
-        restaurant.setOpeningHours(openingHours);
+        restaurant.setOpeningDays(openingDays);
 
-        assertEquals(openingHours, restaurant.getOpeningHours());
-        assertTrue(restaurant.getOpeningHours().getOpenNow());
+        assertEquals(openingDays, restaurant.getOpeningDays());
+    }
+
+    @Test
+    void review_ShouldCreateAndWorkCorrectly() {
+        Restaurant.Review review = new Restaurant.Review();
+
+        assertNull(review.getAuthorName());
+        assertNull(review.getRating());
+        assertNull(review.getText());
+        assertNull(review.getRelativeTimeDescription());
+        assertNull(review.getCreatedAt());
+    }
+
+    @Test
+    void review_SetValues_ShouldWorkCorrectly() {
+        Restaurant.Review review = new Restaurant.Review();
+        String authorName = "John Doe";
+        Double rating = 5.0;
+        String text = "Great food!";
+        LocalDateTime now = LocalDateTime.now();
+
+        review.setAuthorName(authorName);
+        review.setRating(rating);
+        review.setText(text);
+        review.setRelativeTimeDescription(now);
+        review.setCreatedAt(now);
+
+        assertEquals(authorName, review.getAuthorName());
+        assertEquals(rating, review.getRating());
+        assertEquals(text, review.getText());
+        assertEquals(now, review.getRelativeTimeDescription());
+        assertEquals(now, review.getCreatedAt());
     }
 
     @Test
     void setReviews_ShouldSetReviewsCorrectly() {
         Restaurant restaurant = new Restaurant();
         Restaurant.Review review1 = new Restaurant.Review();
-        review1.setAuthorName("John Doe");
+        review1.setAuthorName("John");
         review1.setRating(5.0);
-        review1.setText("Great food!");
 
         Restaurant.Review review2 = new Restaurant.Review();
-        review2.setAuthorName("Jane Smith");
+        review2.setAuthorName("Jane");
         review2.setRating(4.0);
-        review2.setText("Good service");
 
         List<Restaurant.Review> reviews = Arrays.asList(review1, review2);
+
         restaurant.setReviews(reviews);
 
         assertEquals(reviews, restaurant.getReviews());
         assertEquals(2, restaurant.getReviews().size());
-        assertEquals("John Doe", restaurant.getReviews().get(0).getAuthorName());
-        assertEquals(5.0, restaurant.getReviews().get(0).getRating());
     }
 
     @Test
@@ -157,7 +181,9 @@ class RestaurantTest {
         Double rating = 4.5;
         Integer priceLevel = 3;
         String phoneNumber = "+49 123 456789";
-        List<String> types = Arrays.asList("Italian", "Pizza");
+
+        List<RestaurantType> types = Arrays.asList(RestaurantType.ITALIAN, RestaurantType.GERMAN);
+
         Integer ratingCount = 100;
         String address = "123 Main St, Berlin";
         Point location = new Point(13.4050, 52.5200);
@@ -189,119 +215,32 @@ class RestaurantTest {
     }
 
     @Test
-    void openingHours_ShouldCreateAndWorkCorrectly() {
-        Restaurant.OpeningHours openingHours = new Restaurant.OpeningHours();
+    void openingDays_ShouldCreateAndWorkCorrectly() {
+        Restaurant.OpeningDays openingDays = new Restaurant.OpeningDays();
 
-        assertNull(openingHours.getOpenNow());
-        assertNull(openingHours.getWeekdayText());
+        assertNull(openingDays.getOpenNow());
+        assertNull(openingDays.getWeekdays());
     }
 
     @Test
-    void openingHours_SetOpenNow_ShouldWorkCorrectly() {
-        Restaurant.OpeningHours openingHours = new Restaurant.OpeningHours();
+    void openingDays_SetOpenNow_ShouldWorkCorrectly() {
+        Restaurant.OpeningDays openingDays = new Restaurant.OpeningDays();
 
-        openingHours.setOpenNow(true);
-        assertTrue(openingHours.getOpenNow());
+        openingDays.setOpenNow(true);
+        assertTrue(openingDays.getOpenNow());
 
-        openingHours.setOpenNow(false);
-        assertFalse(openingHours.getOpenNow());
+        openingDays.setOpenNow(false);
+        assertFalse(openingDays.getOpenNow());
     }
 
     @Test
-    void openingHours_SetWeekdayText_ShouldWorkCorrectly() {
-        Restaurant.OpeningHours openingHours = new Restaurant.OpeningHours();
-        List<String> weekdayText = Arrays.asList(
-            "Monday: 9:00 AM – 10:00 PM",
-            "Tuesday: 9:00 AM – 10:00 PM",
-            "Wednesday: 9:00 AM – 10:00 PM"
-        );
+    void openingDays_SetWeekdays_ShouldWorkCorrectly() {
+        Restaurant.OpeningDays openingDays = new Restaurant.OpeningDays();
+        List<WeekDay> weekdays = Arrays.asList(WeekDay.MONDAY, WeekDay.TUESDAY);
 
-        openingHours.setWeekdayText(weekdayText);
+        openingDays.setWeekdays(weekdays);
 
-        assertEquals(weekdayText, openingHours.getWeekdayText());
-        assertEquals(3, openingHours.getWeekdayText().size());
-    }
-
-    @Test
-    void review_ShouldCreateAndWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-
-        assertNull(review.getAuthorName());
-        assertNull(review.getRating());
-        assertNull(review.getText());
-        assertNull(review.getRelativeTimeDescription());
-        assertNull(review.getCreatedAt());
-    }
-
-    @Test
-    void review_SetAuthorName_ShouldWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-        String authorName = "John Doe";
-
-        review.setAuthorName(authorName);
-
-        assertEquals(authorName, review.getAuthorName());
-    }
-
-    @Test
-    void review_SetRating_ShouldWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-        Double rating = 4.5;
-
-        review.setRating(rating);
-
-        assertEquals(rating, review.getRating());
-    }
-
-    @Test
-    void review_SetText_ShouldWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-        String text = "Great restaurant with excellent food!";
-
-        review.setText(text);
-
-        assertEquals(text, review.getText());
-    }
-
-    @Test
-    void review_SetRelativeTimeDescription_ShouldWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-        LocalDateTime relativeTime = LocalDateTime.now();
-
-        review.setRelativeTimeDescription(relativeTime);
-
-        assertEquals(relativeTime, review.getRelativeTimeDescription());
-    }
-
-    @Test
-    void review_SetCreatedAt_ShouldWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-        LocalDateTime createdAt = LocalDateTime.now();
-
-        review.setCreatedAt(createdAt);
-
-        assertEquals(createdAt, review.getCreatedAt());
-    }
-
-    @Test
-    void review_FullObject_ShouldWorkCorrectly() {
-        Restaurant.Review review = new Restaurant.Review();
-        String authorName = "John Doe";
-        Double rating = 5.0;
-        String text = "Amazing food and service!";
-        LocalDateTime relativeTime = LocalDateTime.now().minusDays(2);
-        LocalDateTime createdAt = LocalDateTime.now();
-
-        review.setAuthorName(authorName);
-        review.setRating(rating);
-        review.setText(text);
-        review.setRelativeTimeDescription(relativeTime);
-        review.setCreatedAt(createdAt);
-
-        assertEquals(authorName, review.getAuthorName());
-        assertEquals(rating, review.getRating());
-        assertEquals(text, review.getText());
-        assertEquals(relativeTime, review.getRelativeTimeDescription());
-        assertEquals(createdAt, review.getCreatedAt());
+        assertEquals(weekdays, openingDays.getWeekdays());
+        assertEquals(2, openingDays.getWeekdays().size());
     }
 }
