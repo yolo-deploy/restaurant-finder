@@ -3,25 +3,32 @@ package com.amazingapps.restaurantfinder.mapper;
 import com.amazingapps.restaurantfinder.domain.Restaurant;
 import com.amazingapps.restaurantfinder.domain.RestaurantType;
 import com.amazingapps.restaurantfinder.domain.WeekDay;
-import com.amazingapps.restaurantfinder.dto.restaurant.*;
+import com.amazingapps.restaurantfinder.dto.restaurant.LocationResponse;
+import com.amazingapps.restaurantfinder.dto.restaurant.OpeningDaysResponse;
+import com.amazingapps.restaurantfinder.dto.restaurant.RestaurantCreateRequest;
+import com.amazingapps.restaurantfinder.dto.restaurant.RestaurantResponse;
+import com.amazingapps.restaurantfinder.dto.restaurant.RestaurantSummaryResponse;
+import com.amazingapps.restaurantfinder.dto.restaurant.RestaurantUpdateLocationRequest;
+import com.amazingapps.restaurantfinder.dto.restaurant.RestaurantUpdateOpeningDaysRequest;
+import com.amazingapps.restaurantfinder.dto.restaurant.RestaurantUpdateRequest;
+import com.amazingapps.restaurantfinder.dto.restaurant.ReviewCreateRequest;
+import com.amazingapps.restaurantfinder.dto.restaurant.ReviewResponse;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.geo.Point;
-    import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
 class RestaurantMapperTest {
 
-    @Autowired
-    private RestaurantMapper restaurantMapper;
+    private final RestaurantMapper restaurantMapper = Mappers.getMapper(RestaurantMapper.class);
 
     @Test
     void toEntity_FromCreateRequest_ShouldMapCorrectly() {
@@ -505,3 +512,4 @@ class RestaurantMapperTest {
         assertEquals("789 Updated Street", result.getFormattedAddress());
     }
 }
+
