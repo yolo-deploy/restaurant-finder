@@ -174,19 +174,33 @@ class UserServiceTest {
 
     @Test
     void getToken_withId_usesGetOrThrow() {
+        String userId = "specificUserId";
         User mockUser = mock(User.class);
-        loginRequest = new UserLoginRequest("mail", "pass");
-        when(repository.findByEmailIgnoreCase("mail")).thenReturn(Optional.of(mockUser));
-        when(repository.getOrThrow("mockId")).thenReturn(mockUser);
-        when(mockUser.getPasswordHash()).thenReturn("hash");
-        when(mockUser.getId()).thenReturn("mockId");
+        loginRequest = new UserLoginRequest("user@test.com", "validPassword");
+
+        when(mockUser.getId()).thenReturn(userId);
+        when(mockUser.getPasswordHash()).thenReturn("hashedPassword");
+
+        when(repository.findByEmailIgnoreCase("user@test.com")).thenReturn(Optional.of(mockUser));
+        when(repository.getOrThrow(userId)).thenReturn(mockUser);
+
         try (MockedStatic<PasswordUtil> util = mockStatic(PasswordUtil.class)) {
-            util.when(() -> PasswordUtil.matches(any(), any())).thenReturn(true);
-            when(mapper.toResponse(any())).thenReturn(userResponse);
-            when(tokenInteract.generateToken(any())).thenReturn("token");
-            when(mapper.toLoginResponse(any(), any())).thenReturn(loginResponse);
-            UserLoginResponse resp = userService.getToken(loginRequest);
-            assertNotNull(resp);
+            util.when(() -> PasswordUtil.matches("validPassword", "hashedPassword")).thenReturn(true);
+            when(mapper.toResponse(mockUser)).thenReturn(userResponse);
+            when(tokenInteract.generateToken(any(UserDetailsImpl.class))).thenReturn("authToken");
+            when(mapper.toLoginResponse(userResponse, "authToken")).thenReturn(loginResponse);
+
+            UserLoginResponse result = userService.getToken(loginRequest);
+
+            assertNotNull(result);
+            assertEquals(loginResponse, result);
+
+            verify(repository).findByEmailIgnoreCase("user@test.com");
+            verify(repository).getOrThrow(userId);
+            util.verify(() -> PasswordUtil.matches("validPassword", "hashedPassword"));
+            verify(mapper).toResponse(mockUser);
+            verify(tokenInteract).generateToken(any(UserDetailsImpl.class));
+            verify(mapper).toLoginResponse(userResponse, "authToken");
         }
     }
 

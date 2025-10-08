@@ -32,4 +32,4 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=yolo-deploy \
             -Dsonar.projectKey=yolo-deploy_restaurant-finder \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}

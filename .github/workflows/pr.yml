@@ -37,7 +37,7 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=yolo-deploy \
             -Dsonar.projectKey=yolo-deploy_restaurant-finder \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
             -Dsonar.pullrequest.branch=${{ github.head_ref }} \
             -Dsonar.pullrequest.base=${{ github.base_ref }}

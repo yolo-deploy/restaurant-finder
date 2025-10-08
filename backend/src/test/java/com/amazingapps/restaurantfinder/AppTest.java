@@ -17,6 +17,14 @@ class AppTest {
 
     @Test
     void contextLoads() {
+        /*
+         * This test method is intentionally empty.
+         * It serves as a basic smoke test to verify that the Spring Boot application context
+         * can be loaded successfully without any configuration errors or bean creation failures.
+         * The @SpringBootTest annotation automatically triggers the application context loading,
+         * and if the context fails to load, this test will fail.
+         * No additional assertions are needed as the framework handles the validation.
+         */
     }
 
     @Test
