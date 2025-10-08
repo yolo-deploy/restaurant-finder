@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AuthRequired(AuthInterceptor.class)
 @Tag(name = "user", description = "User endpoints")
 public class UserRestController {
+
     private final UserService service;
     private final AuthInterceptor authInterceptor;
 
