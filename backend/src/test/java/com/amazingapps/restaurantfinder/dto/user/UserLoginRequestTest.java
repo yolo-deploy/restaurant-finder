@@ -6,8 +6,12 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,75 +39,29 @@ class UserLoginRequestTest {
         assertEquals("password123", request.password());
     }
 
-    @Test
-    void blankEmail_ShouldFailValidation() {
-        UserLoginRequest request = new UserLoginRequest("", "password123");
+    @ParameterizedTest
+    @MethodSource("invalidRequestProvider")
+    void invalidRequest_ShouldFailValidation(String email, String password, String expectedErrorMessage) {
+        UserLoginRequest request = new UserLoginRequest(email, password);
 
         Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
 
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Email cannot be blank")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains(expectedErrorMessage)),
+                "Expected error message '" + expectedErrorMessage + "' not found in violations: " +
+                violations.stream().map(ConstraintViolation::getMessage).toList());
     }
 
-    @Test
-    void nullEmail_ShouldFailValidation() {
-        UserLoginRequest request = new UserLoginRequest(null, "password123");
-
-        Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Email cannot be blank")));
-    }
-
-    @Test
-    void invalidEmailFormat_ShouldFailValidation() {
-        UserLoginRequest request = new UserLoginRequest("invalid-email", "password123");
-
-        Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Invalid email format")));
-    }
-
-    @Test
-    void blankPassword_ShouldFailValidation() {
-        UserLoginRequest request = new UserLoginRequest("test@example.com", "");
-
-        Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Password cannot be blank")));
-    }
-
-    @Test
-    void nullPassword_ShouldFailValidation() {
-        UserLoginRequest request = new UserLoginRequest("test@example.com", null);
-
-        Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Password cannot be blank")));
-    }
-
-    @Test
-    void shortPassword_ShouldFailValidation() {
-        UserLoginRequest request = new UserLoginRequest("test@example.com", "1234");
-
-        Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Password must be between 5 and 30 characters")));
-    }
-
-    @Test
-    void longPassword_ShouldFailValidation() {
-        String longPassword = "a".repeat(31);
-        UserLoginRequest request = new UserLoginRequest("test@example.com", longPassword);
-
-        Set<ConstraintViolation<UserLoginRequest>> violations = validator.validate(request);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Password must be between 5 and 30 characters")));
+    static Stream<Arguments> invalidRequestProvider() {
+        return Stream.of(
+                Arguments.of("", "password123", "Email cannot be blank"),
+                Arguments.of(null, "password123", "Email cannot be blank"),
+                Arguments.of("invalid-email", "password123", "Invalid email format"),
+                Arguments.of("test@example.com", "", "Password cannot be blank"),
+                Arguments.of("test@example.com", null, "Password cannot be blank"),
+                Arguments.of("test@example.com", "1234", "Password must be between 5 and 30 characters"),
+                Arguments.of("test@example.com", "a".repeat(31), "Password must be between 5 and 30 characters")
+        );
     }
 
     @Test
