@@ -5,7 +5,7 @@ spring:
     banner-mode: off
   data:
     mongodb:
-      uri: mongodb://localhost:27017/restaurant_finder
+      uri: ${MONGO_URI}
 server:
   port: 8080
   servlet:
