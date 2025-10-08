@@ -21,7 +21,7 @@ class AuthenticateRestControllerTest {
         UserLoginRequest request = new UserLoginRequest("test@example.com", "pass");
         UserLoginResponse response = new UserLoginResponse("token", new com.amazingapps.restaurantfinder.dto.user.UserResponse("test@example.com"));
 
-        when(service.getToken(null, request)).thenReturn(response);
+        when(service.getToken(request)).thenReturn(response);
 
         var result = controller.authenticate(request);
 

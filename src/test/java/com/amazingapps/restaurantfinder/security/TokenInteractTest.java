@@ -22,14 +22,13 @@ class TokenInteractTest {
     @BeforeEach
     void setUp() throws Exception {
         tokenInteract = new TokenInteract();
-        // set secretKey (32 bytes) and expirationTime via reflection
         Field secretField = TokenInteract.class.getDeclaredField("secretKey");
         secretField.setAccessible(true);
         secretField.set(tokenInteract, "01234567890123456789012345678901");
 
         Field expField = TokenInteract.class.getDeclaredField("expirationTime");
         expField.setAccessible(true);
-        expField.setLong(tokenInteract, 1000L * 60 * 60); // 1 hour
+        expField.setLong(tokenInteract, 1000L * 60 * 60);
     }
 
     @Test
@@ -41,7 +40,7 @@ class TokenInteractTest {
 
         assertTrue(tokenInteract.validateToken(token));
 
-        String username = tokenInteract.getUser(token);
+        String username = tokenInteract.getUserId(token);
         assertEquals("testUser", username);
     }
 

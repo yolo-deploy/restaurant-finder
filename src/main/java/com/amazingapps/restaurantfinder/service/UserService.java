@@ -1,9 +1,11 @@
 package com.amazingapps.restaurantfinder.service;
 
 import com.amazingapps.restaurantfinder.domain.User;
+import com.amazingapps.restaurantfinder.dto.user.UserCreateRequest;
 import com.amazingapps.restaurantfinder.dto.user.UserLoginRequest;
 import com.amazingapps.restaurantfinder.dto.user.UserLoginResponse;
 import com.amazingapps.restaurantfinder.dto.user.UserResponse;
+import com.amazingapps.restaurantfinder.dto.user.UserUpdatePasswordRequest;
 import com.amazingapps.restaurantfinder.exception.ExecutionConflictException;
 import com.amazingapps.restaurantfinder.mapper.UserMapper;
 import com.amazingapps.restaurantfinder.repository.UserRepository;
@@ -30,24 +32,64 @@ public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final UserMapper mapper;
 
+    /** Finds a user by ID and returns a UserResponse DTO.
+     *
+     * @param id ID of the user to find
+     * @return UserResponse containing user details
+     */
+    public UserResponse find(String id) {
+        return mapper.toResponse(repository.getOrThrow(id));
+    }
+
+    /** Creates a new user after checking for unique email and hashing the password.
+     *
+     * @param request request containing user creation details
+     */
+    public void create(UserCreateRequest request) {
+        checkUniqueEmail(request.email());
+        repository.save(mapper.toEntity(request.email(), PasswordUtil.hash(request.password())));
+    }
+
+    /**
+     * Deletes a user by ID.
+     *
+     * @param userId ID of the user to delete
+     */
+    public void remove(String userId) {
+        User user = repository.getOrThrow(userId);
+        repository.delete(user);
+    }
+
+    /**
+     * Updates the password of an existing user after verifying the old password.
+     *
+     * @param userId  ID of the user to update
+     * @param request request containing old and new passwords
+     * @return response containing updated user details
+     */
+    public UserResponse updatePassword(String userId, UserUpdatePasswordRequest request) {
+        User user = repository.getOrThrow(userId);
+        verifyPassword(request.oldPassword(), user.getPasswordHash());
+        user.setPasswordHash(PasswordUtil.hash(request.password()));
+        return mapper.toResponse(repository.save(user));
+    }
+
     /**
      * Authenticates a user by ID or email and returns a login response with JWT token.
-     * @param id user ID (nullable)
+     *
      * @param request user login request
      * @return login response containing JWT token and user info
      */
-    public UserLoginResponse getToken(String id, UserLoginRequest request) {
-        User user = null == id ? findByEmail(request.email()) : repository.getOrThrow(id);
-
+    public UserLoginResponse getToken(UserLoginRequest request) {
+        User user = findByEmail(request.email());
         verifyPassword(request.password(), user.getPasswordHash());
-
         UserResponse response = mapper.toResponse(user);
-
-        return mapper.toLoginResponse(response, tokenInteract.generateToken(loadUserByUsername(user.getEmail())));
+        return mapper.toLoginResponse(response, tokenInteract.generateToken(loadUserByUsername(user.getId())));
     }
 
     /**
      * Validates the JWT token from the HTTP request.
+     *
      * @param request HTTP servlet request
      * @return true if token is valid, false otherwise
      */
@@ -57,24 +99,24 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Loads user details by username (email) for authentication.
-     * @param name user's email address
-     * @return UserDetails implementation
+     * Loads user details by user ID for authentication purposes.
+     *
+     * @param userId user's ID
+     * @return UserDetails implementation containing user info
      * @throws UsernameNotFoundException if user is not found
      */
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = repository.findByEmailIgnoreCase(name)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + name));
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        User user = repository.getOrThrow(userId);
 
         return UserDetailsImpl.builder()
                 .id(user.getId())
-                .name(user.getEmail())
                 .passwordHash(user.getPasswordHash()).build();
     }
 
     /**
      * Finds a user by email or throws BadCredentialsException if not found.
+     *
      * @param email user's email address
      * @return User entity
      */
@@ -88,7 +130,8 @@ public class UserService implements UserDetailsService {
     /**
      * Verifies the raw password against the stored password hash.
      * Throws BadCredentialsException if the password is invalid.
-     * @param rawPassword plain text password
+     *
+     * @param rawPassword  plain text password
      * @param passwordHash hashed password
      */
     private void verifyPassword(String rawPassword, String passwordHash) {
@@ -100,6 +143,7 @@ public class UserService implements UserDetailsService {
     /**
      * Checks if the email is unique in the database.
      * Throws ExecutionConflictException if a user with the email already exists.
+     *
      * @param email user's email address
      */
     private void checkUniqueEmail(String email) {

@@ -23,11 +23,7 @@ Prerequisites: JDK 25, Maven, running MongoDB
 1) Set required environment variables (example):
 
 ```cmd
-set MONGO_USER=myuser
-set MONGO_PASSWORD=mypassword
-set MONGO_HOST=localhost
-set MONGO_PORT=27017
-set MONGO_DATABASE=restaurant-db
+set MONGO_URI=mongodb://{user}:{password}@{url}/{database}?retryWrites=true&w=majority
 set TOKEN_SECRET_KEY=replace_with_secure_key
 set TOKEN_EXPIRATION_TIME=3600000
 set APP_LOG_LEVEL=INFO
@@ -46,12 +42,19 @@ Or run in development:
 mvn spring-boot:run
 ```
 
+Or run with the dev profile (uses application-dev.yml):
+
+```cmd
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
 ## ⚙️ Configuration
 
 - `src/main/resources/application.yml` maps the following environment variables:
-  - `MONGO_USER`, `MONGO_PASSWORD`, `MONGO_HOST`, `MONGO_PORT`, `MONGO_DATABASE`
-  - `TOKEN_SECRET_KEY`, `TOKEN_EXPIRATION_TIME`, `APP_LOG_LEVEL`
-- Server runs under context path `/restaurant-finder` (default port 8080).
+  - `MONGO_URI`, `TOKEN_SECRET_KEY`, `TOKEN_EXPIRATION_TIME`, `APP_LOG_LEVEL`
+- For development, use the `src/main/resources/application-dev.yml` file. Activate it by running with the `dev` profile:
+  - Example: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
+- The server runs under context path `/restaurant-finder` (default port 8080).
 
 
 ## 📜 License

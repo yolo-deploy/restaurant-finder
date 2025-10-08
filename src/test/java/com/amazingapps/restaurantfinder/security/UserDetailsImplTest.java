@@ -1,15 +1,18 @@
 package com.amazingapps.restaurantfinder.security;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserDetailsImplTest {
     @Test
     void builder_setsFields_andUserDetailsMethods() {
         UserDetailsImpl u = UserDetailsImpl.builder()
-                .id("123")
-                .name("user@example.com")
+                .id("user@example.com")
                 .passwordHash("pwdhash")
                 .build();
 
@@ -31,8 +34,31 @@ class UserDetailsImplTest {
     }
 
     @Test
-    void getUsername_returnsName() {
-        UserDetailsImpl user = UserDetailsImpl.builder().name("name").build();
-        assertEquals("name", user.getUsername());
+    void getUsername_returnsId() {
+        UserDetailsImpl user = UserDetailsImpl.builder().id("testId").build();
+        assertEquals("testId", user.getUsername());
+    }
+
+    @Test
+    void builder_withNullValues_shouldWork() {
+        UserDetailsImpl user = UserDetailsImpl.builder()
+                .id(null)
+                .passwordHash(null)
+                .build();
+
+        assertNull(user.getUsername());
+        assertNull(user.getPassword());
+        assertEquals(Collections.emptyList(), user.getAuthorities());
+    }
+
+    @Test
+    void builder_withEmptyValues_shouldWork() {
+        UserDetailsImpl user = UserDetailsImpl.builder()
+                .id("")
+                .passwordHash("")
+                .build();
+
+        assertEquals("", user.getUsername());
+        assertEquals("", user.getPassword());
     }
 }

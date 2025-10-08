@@ -15,7 +15,6 @@ import java.util.Collections;
 public class UserDetailsImpl implements UserDetails {
 
     private String id;
-    private String name;
     private String passwordHash;
 
     /**
@@ -27,7 +26,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Returns the user's password hash.
+     * Returns the user's password (hash).
      */
     @Override
     public String getPassword() {
@@ -35,10 +34,10 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Returns the user's username (email).
+     * Returns the user's username (id).
      */
     @Override
     public String getUsername() {
-        return name;
+        return id;
     }
 }

@@ -5,11 +5,7 @@ spring:
     banner-mode: off
   data:
     mongodb:
-      username: ${MONGO_USER}
-      password: ${MONGO_PASSWORD}
-      host: ${MONGO_HOST}
-      port: ${MONGO_PORT}
-      database: ${MONGO_DATABASE}
+      uri: ${MONGO_URI}
 server:
   port: 8080
   servlet:
