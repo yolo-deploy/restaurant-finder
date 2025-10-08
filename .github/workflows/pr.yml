@@ -26,14 +26,14 @@ jobs:
           cache: maven
 
       - name: Run tests with coverage
-        run: mvn -B clean verify
+        run: cd backend && mvn -B clean verify
 
       - name: SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn -B sonar:sonar \
+          cd backend && mvn -B sonar:sonar \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=yolo-deploy \
             -Dsonar.projectKey=yolo-deploy_restaurant-finder \
