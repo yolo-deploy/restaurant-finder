@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.amazing-apps</groupId>
+    <groupId>com.amazingapps</groupId>
     <artifactId>restaurant-finder</artifactId>
     <name>restaurant-finder</name>
     <version>0.1</version>
