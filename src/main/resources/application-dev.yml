@@ -5,7 +5,7 @@ spring:
     banner-mode: off
   data:
     mongodb:
-      uri: mongodb://localhost:27017/restaurant_finder
+      uri: localhost:27017/restaurant_finder
 server:
   port: 8080
   servlet:
@@ -14,12 +14,11 @@ logging:
   level:
     com:
       amazingapps:
-        restaurant-finder: INFO
+        restaurant-finder: DEBUG
 jwt:
   expiration:
-    time: 3600
+    time: 720000
   secret:
-    key: testsecret
+    key: 1234567890
 app:
-  version: "0.1"
-
+  version: "@project.version@"

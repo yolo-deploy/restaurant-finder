@@ -13,12 +13,12 @@ import java.util.TimeZone;
 @Slf4j
 @SpringBootApplication
 public class App {
+
     /**
      * Starts the Spring Boot application.
      * @param args command-line arguments
      */
-    static void main(String[] args) {
-
+   public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         SpringApplication.run(App.class, args);
     }

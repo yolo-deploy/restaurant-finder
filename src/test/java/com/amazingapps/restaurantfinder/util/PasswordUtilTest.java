@@ -9,7 +9,7 @@ class PasswordUtilTest {
     @Test
     void hashAndMatch_shouldWork() {
         String raw = "mySecretPassword";
-        String hashed = PasswordUtil.hashPassword(raw);
+        String hashed = PasswordUtil.hash(raw);
 
         assertNotNull(hashed);
         assertNotEquals(raw, hashed);
@@ -19,7 +19,7 @@ class PasswordUtilTest {
     @Test
     void matches_wrongPassword_returnsFalse() {
         String raw = "password1";
-        String hashed = PasswordUtil.hashPassword("password2");
+        String hashed = PasswordUtil.hash("password2");
 
         assertFalse(PasswordUtil.matches(raw, hashed));
     }

@@ -1,6 +1,5 @@
 package com.amazingapps.restaurantfinder.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +8,7 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,54 +17,66 @@ import java.util.List;
  * Represents a restaurant entity stored in MongoDB.
  * Contains information about the restaurant such as name, rating, location, types, reviews, and opening hours.
  */
-@Document(collection = "restaurants")
+
 @Getter
 @Setter
+@NoArgsConstructor
+@Document(collection = "restaurants")
 public class Restaurant extends AbstractDocument {
 
     /**
      * The name of the restaurant.
      */
-    @Indexed
+    @Field("name")
+    @Indexed(unique = true)
     private String name;
     /**
      * The average rating of the restaurant.
      */
+    @Field("rating")
     private Double rating;
     /**
      * The price level of the restaurant (e.g., 1-5).
      */
+    @Field("price_level")
     private Integer priceLevel;
     /**
      * The phone number of the restaurant.
      */
+    @Field("phone_number")
     private String phoneNumber;
 
     /**
      * The types/categories of the restaurant (e.g., Italian, Sushi).
      */
     @Indexed
+    @Field("types")
     private List<String> types;
     /**
      * The number of ratings received by the restaurant.
      */
+    @Field("rating_count")
     private Integer ratingCount;
     /**
      * The list of reviews for the restaurant.
      */
+    @Field("reviews")
     private List<Review> reviews;
     /**
      * The formatted address of the restaurant.
      */
+    @Field("formatted_address")
     private String formattedAddress;
     /**
      * The opening hours information for the restaurant.
      */
+    @Field("opening_hours")
     private OpeningHours openingHours;
 
     /**
      * The geographic location of the restaurant (longitude, latitude).
      */
+    @Field("location")
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private Point location;
 
@@ -74,7 +86,6 @@ public class Restaurant extends AbstractDocument {
     @Getter
     @Setter
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class OpeningHours {
         /**
          * Indicates if the restaurant is currently open.
@@ -92,7 +103,6 @@ public class Restaurant extends AbstractDocument {
     @Getter
     @Setter
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class Review {
         /**
          * The name of the review's author.
