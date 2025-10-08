@@ -1,35 +1,115 @@
 package com.amazingapps.restaurantfinder.exception;
 
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseErrorTest {
+
     @Test
-    void builder_setsAllFields() {
-        LocalDateTime now = LocalDateTime.now();
-        ResponseError err = ResponseError.builder()
-            .timestamp(now)
-            .status(404)
-            .message("msg")
-            .code("CODE")
-            .build();
-        assertEquals(now, err.getTimestamp());
-        assertEquals(404, err.getStatus());
-        assertEquals("msg", err.getMessage());
-        assertEquals("CODE", err.getCode());
+    void constructor_NoArgs_ShouldCreateEmptyObject() {
+        ResponseError responseError = new ResponseError();
+
+        assertNotNull(responseError);
+        assertNull(responseError.getTimestamp());
+        assertNull(responseError.getStatus());
+        assertNull(responseError.getMessage());
+        assertNull(responseError.getCode());
     }
+
     @Test
-    void settersAndGetters_workCorrectly() {
-        ResponseError err = new ResponseError();
-        LocalDateTime now = LocalDateTime.now();
-        err.setTimestamp(now);
-        err.setStatus(500);
-        err.setMessage("error");
-        err.setCode("ERR");
-        assertEquals(now, err.getTimestamp());
-        assertEquals(500, err.getStatus());
-        assertEquals("error", err.getMessage());
-        assertEquals("ERR", err.getCode());
+    void constructor_WithAllArgs_ShouldSetAllFields() {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer status = 404;
+        String message = "Not found";
+        String code = "ERR_001";
+
+        ResponseError responseError = new ResponseError(timestamp, status, message, code);
+
+        assertEquals(timestamp, responseError.getTimestamp());
+        assertEquals(status, responseError.getStatus());
+        assertEquals(message, responseError.getMessage());
+        assertEquals(code, responseError.getCode());
+    }
+
+    @Test
+    void builder_ShouldCreateObjectCorrectly() {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer status = 500;
+        String message = "Internal server error";
+        String code = "ERR_500";
+
+        ResponseError responseError = ResponseError.builder()
+                .timestamp(timestamp)
+                .status(status)
+                .message(message)
+                .code(code)
+                .build();
+
+        assertEquals(timestamp, responseError.getTimestamp());
+        assertEquals(status, responseError.getStatus());
+        assertEquals(message, responseError.getMessage());
+        assertEquals(code, responseError.getCode());
+    }
+
+    @Test
+    void settersAndGetters_ShouldWorkCorrectly() {
+        ResponseError responseError = new ResponseError();
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer status = 400;
+        String message = "Bad request";
+        String code = "ERR_400";
+
+        responseError.setTimestamp(timestamp);
+        responseError.setStatus(status);
+        responseError.setMessage(message);
+        responseError.setCode(code);
+
+        assertEquals(timestamp, responseError.getTimestamp());
+        assertEquals(status, responseError.getStatus());
+        assertEquals(message, responseError.getMessage());
+        assertEquals(code, responseError.getCode());
+    }
+
+    @Test
+    void equals_WithSameValues_ShouldReturnTrue() {
+        LocalDateTime timestamp = LocalDateTime.now();
+        ResponseError error1 = ResponseError.builder()
+                .timestamp(timestamp)
+                .status(404)
+                .message("Not found")
+                .code("ERR_404")
+                .build();
+
+        ResponseError error2 = ResponseError.builder()
+                .timestamp(timestamp)
+                .status(404)
+                .message("Not found")
+                .code("ERR_404")
+                .build();
+
+        assertEquals(error1, error2);
+    }
+
+    @Test
+    void hashCode_WithSameValues_ShouldReturnSameHashCode() {
+        LocalDateTime timestamp = LocalDateTime.now();
+        ResponseError error1 = ResponseError.builder()
+                .timestamp(timestamp)
+                .status(404)
+                .message("Not found")
+                .code("ERR_404")
+                .build();
+
+        ResponseError error2 = ResponseError.builder()
+                .timestamp(timestamp)
+                .status(404)
+                .message("Not found")
+                .code("ERR_404")
+                .build();
+
+        assertEquals(error1.hashCode(), error2.hashCode());
     }
 }

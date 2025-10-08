@@ -23,7 +23,7 @@ public interface RestaurantRepository extends AbstractRepository<Restaurant, Str
      * Sucht Restaurants, die den angegebenen Typ in der Liste der Typen enthalten (z. B. "Italian").
      * Da `types` eine Liste von Strings ist, matcht dies ein Element der Liste.
      */
-    List<Restaurant> findByTypes(String type);
+    List<Restaurant> findAllByTypesContainingIgnoreCase(String type);
 
     /**
      * Sucht Restaurants mit einer Bewertung größer oder gleich dem angegebenen Wert.

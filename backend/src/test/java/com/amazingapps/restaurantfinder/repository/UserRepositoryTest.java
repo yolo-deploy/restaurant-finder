@@ -1,29 +1,97 @@
 package com.amazingapps.restaurantfinder.repository;
 
 import com.amazingapps.restaurantfinder.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@DataMongoTest
+@ActiveProfiles("test")
 class UserRepositoryTest {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User testUser;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+
+        testUser = new User();
+        testUser.setEmail("test@example.com");
+        testUser.setPasswordHash("hashedPassword");
+        testUser.setRestaurantIds(List.of("restaurant1", "restaurant2"));
+
+        userRepository.save(testUser);
+    }
+
     @Test
-    void findByEmailIgnoreCase_shouldReturnUser() {
-        UserRepository repo = Mockito.mock(UserRepository.class);
-        User user = new User();
-        user.setEmail("test@example.com");
-        Mockito.when(repo.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(user));
-        Optional<User> result = repo.findByEmailIgnoreCase("test@example.com");
+    void findByEmailIgnoreCase_ShouldReturnUser() {
+        Optional<User> result = userRepository.findByEmailIgnoreCase("test@example.com");
+
+        assertTrue(result.isPresent());
+        assertEquals("test@example.com", result.get().getEmail());
+        assertEquals("hashedPassword", result.get().getPasswordHash());
+    }
+
+    @Test
+    void findByEmailIgnoreCase_WithDifferentCase_ShouldReturnUser() {
+        Optional<User> result = userRepository.findByEmailIgnoreCase("TEST@EXAMPLE.COM");
+
         assertTrue(result.isPresent());
         assertEquals("test@example.com", result.get().getEmail());
     }
 
     @Test
-    void findByEmailIgnoreCase_shouldReturnEmpty() {
-        UserRepository repo = Mockito.mock(UserRepository.class);
-        Mockito.when(repo.findByEmailIgnoreCase("notfound@example.com")).thenReturn(Optional.empty());
-        Optional<User> result = repo.findByEmailIgnoreCase("notfound@example.com");
+    void findByEmailIgnoreCase_WithNonExistentEmail_ShouldReturnEmpty() {
+        Optional<User> result = userRepository.findByEmailIgnoreCase("nonexistent@example.com");
+
         assertFalse(result.isPresent());
     }
-}
 
+    @Test
+    void saveAndFindById_ShouldWork() {
+        User newUser = new User();
+        newUser.setEmail("new@example.com");
+        newUser.setPasswordHash("newPassword");
+
+        User savedUser = userRepository.save(newUser);
+        Optional<User> foundUser = userRepository.findById(savedUser.getId());
+
+        assertNotNull(savedUser.getId());
+        assertTrue(foundUser.isPresent());
+        assertEquals("new@example.com", foundUser.get().getEmail());
+    }
+
+    @Test
+    void deleteById_ShouldRemoveUser() {
+        String userId = testUser.getId();
+
+        userRepository.deleteById(userId);
+        boolean exists = userRepository.existsById(userId);
+
+        assertFalse(exists);
+    }
+
+    @Test
+    void findAll_ShouldReturnAllUsers() {
+        List<User> all = userRepository.findAll();
+
+        assertEquals(1, all.size());
+    }
+
+    @Test
+    void count_ShouldReturnCorrectCount() {
+        long count = userRepository.count();
+
+        assertEquals(1, count);
+    }
+}

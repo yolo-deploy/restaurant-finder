@@ -2,81 +2,199 @@ package com.amazingapps.restaurantfinder.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class AuthInterceptorTest {
+
+    @Mock
+    private TokenInteract tokenInteract;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
+
+    @InjectMocks
+    private AuthInterceptor authInterceptor;
+
+    private Object handler = new Object();
+
+    @BeforeEach
+    void setUp() {
+        authInterceptor.postHandle(request, response, handler, null);
+    }
+
     @Test
-    void preHandle_validToken_setsUserAndReturnsTrue() throws Exception {
-        TokenInteract tokenInteract = mock(TokenInteract.class);
-        AuthInterceptor interceptor = new AuthInterceptor(tokenInteract);
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
+    void preHandle_WithVersionEndpoint_ShouldReturnTrue() throws Exception {
+        when(request.getServletPath()).thenReturn("/version");
 
-        when(req.getServletPath()).thenReturn("/api/test");
-        when(req.getRequestURI()).thenReturn("/restaurant-finder/api/test");
-        when(tokenInteract.getToken(req)).thenReturn("token");
-        when(tokenInteract.validateToken("token")).thenReturn(true);
-        when(tokenInteract.getUserId("token")).thenReturn("user");
+        boolean result = authInterceptor.preHandle(request, response, handler);
 
-        boolean result = interceptor.preHandle(req, resp, new Object());
         assertTrue(result);
-        assertEquals("user", interceptor.getUserId());
+        verifyNoInteractions(tokenInteract);
     }
 
     @Test
-    void preHandle_invalidToken_returnsFalseAndSendsError() throws Exception {
-        TokenInteract tokenInteract = mock(TokenInteract.class);
-        AuthInterceptor interceptor = new AuthInterceptor(tokenInteract);
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
+    void preHandle_WithAuthenticateEndpoint_ShouldReturnTrue() throws Exception {
+        when(request.getServletPath()).thenReturn("/api/v1/authenticate");
 
-        when(req.getServletPath()).thenReturn("/api/test");
-        when(req.getRequestURI()).thenReturn("/restaurant-finder/api/test");
-        when(tokenInteract.getToken(req)).thenReturn("bad");
-        when(tokenInteract.validateToken("bad")).thenReturn(false);
+        boolean result = authInterceptor.preHandle(request, response, handler);
 
-        boolean result = interceptor.preHandle(req, resp, new Object());
+        assertTrue(result);
+        verifyNoInteractions(tokenInteract);
+    }
+
+    @Test
+    void preHandle_WithUserCreateEndpoint_ShouldReturnTrue() throws Exception {
+        when(request.getServletPath()).thenReturn("/api/v1/user/create");
+
+        boolean result = authInterceptor.preHandle(request, response, handler);
+
+        assertTrue(result);
+        verifyNoInteractions(tokenInteract);
+    }
+
+    @Test
+    void preHandle_WithAuthenticateURI_ShouldReturnTrue() throws Exception {
+        when(request.getServletPath()).thenReturn("/other");
+        when(request.getRequestURI()).thenReturn("/api/v1/authenticate");
+
+        boolean result = authInterceptor.preHandle(request, response, handler);
+
+        assertTrue(result);
+        verifyNoInteractions(tokenInteract);
+    }
+
+    @Test
+    void preHandle_WithUserCreateURI_ShouldReturnTrue() throws Exception {
+        when(request.getServletPath()).thenReturn("/other");
+        when(request.getRequestURI()).thenReturn("/api/v1/user/create");
+
+        boolean result = authInterceptor.preHandle(request, response, handler);
+
+        assertTrue(result);
+        verifyNoInteractions(tokenInteract);
+    }
+
+    @Test
+    void preHandle_WithValidToken_ShouldReturnTrue() throws Exception {
+        String token = "validToken";
+        String userId = "user123";
+
+        when(request.getServletPath()).thenReturn("/api/v1/restaurants");
+        when(request.getRequestURI()).thenReturn("/api/v1/restaurants");
+        when(tokenInteract.getToken(request)).thenReturn(token);
+        when(tokenInteract.validateToken(token)).thenReturn(true);
+        when(tokenInteract.getUserId(token)).thenReturn(userId);
+
+        boolean result = authInterceptor.preHandle(request, response, handler);
+
+        assertTrue(result);
+        assertEquals(userId, authInterceptor.getUserId());
+        verify(tokenInteract).getToken(request);
+        verify(tokenInteract).validateToken(token);
+        verify(tokenInteract).getUserId(token);
+    }
+
+    @Test
+    void preHandle_WithInvalidToken_ShouldReturnFalse() throws Exception {
+        String token = "invalidToken";
+
+        when(request.getServletPath()).thenReturn("/api/v1/restaurants");
+        when(request.getRequestURI()).thenReturn("/api/v1/restaurants");
+        when(tokenInteract.getToken(request)).thenReturn(token);
+        when(tokenInteract.validateToken(token)).thenReturn(false);
+
+        boolean result = authInterceptor.preHandle(request, response, handler);
+
         assertFalse(result);
-        verify(resp).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        verify(tokenInteract).getToken(request);
+        verify(tokenInteract).validateToken(token);
+        verify(tokenInteract, never()).getUserId(token);
     }
 
     @Test
-    void preHandle_blankUser_returnsFalseAndSendsError() throws Exception {
-        TokenInteract tokenInteract = mock(TokenInteract.class);
-        AuthInterceptor interceptor = new AuthInterceptor(tokenInteract);
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
+    void preHandle_WithTokenButEmptyUserId_ShouldReturnFalse() throws Exception {
+        String token = "validToken";
 
-        when(req.getServletPath()).thenReturn("/api/test");
-        when(req.getRequestURI()).thenReturn("/restaurant-finder/api/test");
-        when(tokenInteract.getToken(req)).thenReturn("token");
-        when(tokenInteract.validateToken("token")).thenReturn(true);
-        when(tokenInteract.getUserId("token")).thenReturn("");
+        when(request.getServletPath()).thenReturn("/api/v1/restaurants");
+        when(request.getRequestURI()).thenReturn("/api/v1/restaurants");
+        when(tokenInteract.getToken(request)).thenReturn(token);
+        when(tokenInteract.validateToken(token)).thenReturn(true);
+        when(tokenInteract.getUserId(token)).thenReturn("");
 
-        boolean result = interceptor.preHandle(req, resp, new Object());
+        boolean result = authInterceptor.preHandle(request, response, handler);
+
         assertFalse(result);
-        verify(resp).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 
     @Test
-    void postHandle_removesUser() throws Exception {
-        TokenInteract tokenInteract = mock(TokenInteract.class);
-        AuthInterceptor interceptor = new AuthInterceptor(tokenInteract);
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
+    void preHandle_WithTokenButNullUserId_ShouldReturnFalse() throws Exception {
+        String token = "validToken";
 
-        when(req.getServletPath()).thenReturn("/api/test");
-        when(req.getRequestURI()).thenReturn("/restaurant-finder/api/test");
+        when(request.getServletPath()).thenReturn("/api/v1/restaurants");
+        when(request.getRequestURI()).thenReturn("/api/v1/restaurants");
+        when(tokenInteract.getToken(request)).thenReturn(token);
+        when(tokenInteract.validateToken(token)).thenReturn(true);
+        when(tokenInteract.getUserId(token)).thenReturn(null);
 
-        when(tokenInteract.getToken(req)).thenReturn("token");
-        when(tokenInteract.validateToken("token")).thenReturn(true);
-        when(tokenInteract.getUserId("token")).thenReturn("user");
-        interceptor.preHandle(req, resp, new Object());
+        boolean result = authInterceptor.preHandle(request, response, handler);
 
-        interceptor.postHandle(req, resp, new Object(), null);
-        assertNull(interceptor.getUserId());
+        assertFalse(result);
+        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+    }
+
+    @Test
+    void preHandle_WithTokenException_ShouldThrowException() {
+        when(request.getServletPath()).thenReturn("/api/v1/restaurants");
+        when(request.getRequestURI()).thenReturn("/api/v1/restaurants");
+        when(tokenInteract.getToken(request)).thenThrow(new RuntimeException("Token validation failed"));
+
+        assertThrows(RuntimeException.class, () -> authInterceptor.preHandle(request, response, handler));
+    }
+
+    @Test
+    void getUserId_WithoutSettingUser_ShouldReturnNull() {
+        String userId = authInterceptor.getUserId();
+
+        assertNull(userId);
+    }
+
+    @Test
+    void postHandle_ShouldClearThreadLocal() throws Exception {
+        String token = "validToken";
+        String userId = "user123";
+
+        when(request.getServletPath()).thenReturn("/api/v1/restaurants");
+        when(request.getRequestURI()).thenReturn("/api/v1/restaurants");
+        when(tokenInteract.getToken(request)).thenReturn(token);
+        when(tokenInteract.validateToken(token)).thenReturn(true);
+        when(tokenInteract.getUserId(token)).thenReturn(userId);
+
+        authInterceptor.preHandle(request, response, handler);
+        assertEquals(userId, authInterceptor.getUserId());
+
+        authInterceptor.postHandle(request, response, handler, null);
+
+        assertNull(authInterceptor.getUserId());
     }
 }

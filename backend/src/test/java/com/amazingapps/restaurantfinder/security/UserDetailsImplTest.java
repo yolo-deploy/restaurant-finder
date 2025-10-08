@@ -1,64 +1,67 @@
 package com.amazingapps.restaurantfinder.security;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collections;
+import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserDetailsImplTest {
-    @Test
-    void builder_setsFields_andUserDetailsMethods() {
-        UserDetailsImpl u = UserDetailsImpl.builder()
-                .id("user@example.com")
-                .passwordHash("pwdhash")
+
+    private UserDetailsImpl userDetails;
+
+    @BeforeEach
+    void setUp() {
+        userDetails = UserDetailsImpl.builder()
+                .id("test-user-id")
+                .passwordHash("hashedPassword123")
                 .build();
-
-        assertEquals("user@example.com", u.getUsername());
-        assertEquals("pwdhash", u.getPassword());
-        assertNotNull(u.getAuthorities());
     }
 
     @Test
-    void getAuthorities_returnsEmptyList() {
-        UserDetailsImpl user = UserDetailsImpl.builder().build();
-        assertEquals(Collections.emptyList(), user.getAuthorities());
+    void constructor_ShouldInitializeCorrectly() {
+        assertNotNull(userDetails);
+        assertEquals("test-user-id", userDetails.getUsername());
+        assertEquals("hashedPassword123", userDetails.getPassword());
     }
 
     @Test
-    void getPassword_returnsPasswordHash() {
-        UserDetailsImpl user = UserDetailsImpl.builder().passwordHash("hash").build();
-        assertEquals("hash", user.getPassword());
+    void getAuthorities_ShouldReturnEmptyCollection() {
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+        assertNotNull(authorities);
+        assertTrue(authorities.isEmpty());
     }
 
     @Test
-    void getUsername_returnsId() {
-        UserDetailsImpl user = UserDetailsImpl.builder().id("testId").build();
-        assertEquals("testId", user.getUsername());
+    void isAccountNonExpired_ShouldReturnTrue() {
+        assertTrue(userDetails.isAccountNonExpired());
     }
 
     @Test
-    void builder_withNullValues_shouldWork() {
-        UserDetailsImpl user = UserDetailsImpl.builder()
-                .id(null)
-                .passwordHash(null)
-                .build();
-
-        assertNull(user.getUsername());
-        assertNull(user.getPassword());
-        assertEquals(Collections.emptyList(), user.getAuthorities());
+    void isAccountNonLocked_ShouldReturnTrue() {
+        assertTrue(userDetails.isAccountNonLocked());
     }
 
     @Test
-    void builder_withEmptyValues_shouldWork() {
-        UserDetailsImpl user = UserDetailsImpl.builder()
-                .id("")
-                .passwordHash("")
-                .build();
+    void isCredentialsNonExpired_ShouldReturnTrue() {
+        assertTrue(userDetails.isCredentialsNonExpired());
+    }
 
-        assertEquals("", user.getUsername());
-        assertEquals("", user.getPassword());
+    @Test
+    void isEnabled_ShouldReturnTrue() {
+        assertTrue(userDetails.isEnabled());
+    }
+
+    @Test
+    void getUsername_ShouldReturnUserId() {
+        assertEquals("test-user-id", userDetails.getUsername());
+    }
+
+    @Test
+    void getPassword_ShouldReturnPasswordHash() {
+        assertEquals("hashedPassword123", userDetails.getPassword());
     }
 }
