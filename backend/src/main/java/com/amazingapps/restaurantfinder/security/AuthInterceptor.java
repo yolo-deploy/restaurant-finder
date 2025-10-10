@@ -29,11 +29,12 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response,
                              @NonNull Object handler) throws Exception {
-        if (request.getServletPath().equals("/version")
-                || request.getServletPath().equals("/api/v1/authenticate")
-                || request.getServletPath().equals("/api/v1/user/create")
-                || request.getRequestURI().equals("/api/v1/authenticate")
-                || request.getRequestURI().equals("/api/v1/user/create")) {
+        String path = request.getRequestURI();
+        if (path.endsWith("/version")
+                || path.endsWith("/api/v1/authenticate")
+                || path.endsWith("/api/v1/user/create")
+                || path.contains("/v3/api-docs")
+                || path.contains("/swagger-ui/")) {
             return true;
         }
 

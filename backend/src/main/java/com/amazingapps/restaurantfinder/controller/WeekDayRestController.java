@@ -6,6 +6,7 @@ import com.amazingapps.restaurantfinder.security.AuthRequired;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class WeekDayRestController {
      * @return ResponseEntity containing an array of WeekDay objects
      */
     @GetMapping
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Get all weekdays")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All weekdays"),

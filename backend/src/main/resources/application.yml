@@ -10,6 +10,11 @@ server:
   port: 8080
   servlet:
     context-path: /restaurant-finder
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /
 logging:
   level:
     com:
