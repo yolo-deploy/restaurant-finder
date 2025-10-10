@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { api } from '../lib/http'
 
 export default function RegisterForm() {
-    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState<Record<string, string>>({})
@@ -12,13 +11,12 @@ export default function RegisterForm() {
 
     function validate() {
         const next: Record<string, string> = {}
-        if (!username.trim()) next.username = 'Bitte Benutzername eingeben.'
         if (!email.trim()) {
             next.email = 'Bitte E-Mail eingeben.'
         } else if (!/^([^\s@]+)@([^\s@]+)\.[^\s@]+$/.test(email)) {
             next.email = 'Bitte eine gültige E-Mail angeben.'
         }
-        if (password.length < 6) next.password = 'Passwort muss mind. 6 Zeichen haben.'
+        if (password.length < 5) next.password = 'Passwort muss mind. 5 Zeichen haben.'
         setErrors(next)
         return Object.keys(next).length === 0
     }
@@ -32,13 +30,12 @@ export default function RegisterForm() {
         setLoading(true)
         setNotification({type: 'info', text: 'Registrierung wird ausgeführt…'})
         try {
-            const resp = await api.post('/api/auth/register', { username, email, password })
+            const resp = await api.post('/api/v1/user/create', { email, password })
             if (resp.status < 200 || resp.status >= 300) {
                 setNotification({ type: 'error', text: `Registrierung fehlgeschlagen (HTTP ${resp.status}).` })
                 return
             }
-            setNotification({type: 'success', text: `Registrierung erfolgreich für: ${username}`})
-            setUsername('')
+            setNotification({type: 'success', text: `Registrierung erfolgreich für: ${email}`})
             setEmail('')
             setPassword('')
             setErrors({})
@@ -78,21 +75,6 @@ export default function RegisterForm() {
 
             <form id="registerForm" className="registration-form" onSubmit={handleSubmit} noValidate>
                 <h1>Registrierung</h1>
-
-                <div className="form-group">
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        required
-                        placeholder=" "
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        aria-invalid={Boolean(errors.username)}
-                    />
-                    <label htmlFor="username">Benutzername</label>
-                    {errors.username && <span className="error-message" id="username-error">{errors.username}</span>}
-                </div>
 
                 <div className="form-group">
                     <input
