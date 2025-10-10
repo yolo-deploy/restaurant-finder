@@ -9,6 +9,7 @@ import com.amazingapps.restaurantfinder.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class UserRestController {
      * Returns a 503 Service Unavailable response if the service is temporarily unavailable.
      */
     @GetMapping("/find")
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Finds the current user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User details"),
@@ -87,6 +89,7 @@ public class UserRestController {
      * Returns a 503 Service Unavailable response if the service is temporarily unavailable.
      */
     @PostMapping("/update-password")
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Updates the password of the current user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password updated successfully"),
@@ -109,6 +112,7 @@ public class UserRestController {
      * Returns a 503 Service Unavailable response if the service is temporarily unavailable.
      */
     @DeleteMapping("/delete")
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Deletes the current user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted successfully"),

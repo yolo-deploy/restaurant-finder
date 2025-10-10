@@ -6,6 +6,7 @@ import com.amazingapps.restaurantfinder.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -56,6 +57,7 @@ public class AuthenticateRestController {
      */
     @GetMapping
     @Operation(summary = "Validate JWT token")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "True if token is valid, false otherwise"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),

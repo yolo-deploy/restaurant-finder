@@ -15,6 +15,7 @@ Service for management a favorite restaurant. ✨
 ## ⚙️ Status
 
 - Java 25 • Spring Boot 3.5.6 • MongoDB • JWT authentication 🔐
+- Swagger/OpenAPI 3 • Interactive API Documentation 📖
 
 ## ⚡ Quick start
 
@@ -48,6 +49,21 @@ Or run with the dev profile (uses application-dev.yml):
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
+## 📖 API Documentation
+
+Once the application is running, interactive API documentation is available:
+
+**Swagger UI:** `http://localhost:8080/restaurant-finder/` 🌐
+
+**OpenAPI JSON:** `http://localhost:8080/restaurant-finder/v3/api-docs`
+
+### 🔑 Authentication in Swagger
+
+1. Use the `/api/v1/authenticate` endpoint to login and get a JWT token
+2. Click the **"Authorize"** button in Swagger UI
+3. Enter: `Bearer <your-jwt-token>`
+4. All protected endpoints will now work automatically
+
 ## ⚙️ Configuration
 
 - `src/main/resources/application.yml` maps the following environment variables:
@@ -55,7 +71,6 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 - For development, use the `src/main/resources/application-dev.yml` file. Activate it by running with the `dev` profile:
   - Example: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
 - The server runs under context path `/restaurant-finder` (default port 8080).
-
 
 ## 📜 License
 
