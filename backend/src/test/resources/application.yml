@@ -16,7 +16,7 @@ jwt:
   expiration:
     time: 3600
   secret:
-    key: testsecret
+    key: 1234567890abcdef1234567890abcdef1234567890abcdef
 app:
   version: "0.1"
 de:
